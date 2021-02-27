@@ -52,7 +52,7 @@ func ComputeChecksum(source io.Reader, initialOffset int32, length int32) (uint1
 
 		_, err := source.Read(data)
 		if err != io.EOF {
-			return -1, err
+			return 0, err
 		}
 
 		value = value ^ uint16(data[0])
