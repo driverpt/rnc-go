@@ -3,7 +3,6 @@ package rnc1
 import (
 	"github.com/driverpt/rnc-go/core"
 	"io"
-	"log"
 )
 
 var CrcTable = []uint16{
@@ -41,7 +40,7 @@ var CrcTable = []uint16{
 	0x8201, 0x42C0, 0x4380, 0x8341, 0x4100, 0x81C1, 0x8081, 0x4040,
 }
 
-func ComputeChecksum(source io.Reader, initialOffset int32, length int32) uint16 {
+func ComputeChecksum(source io.Reader, initialOffset int32, length int32) (uint16, error) {
 	value := uint16(0)
 
 	if initialOffset != 0 {
@@ -52,13 +51,13 @@ func ComputeChecksum(source io.Reader, initialOffset int32, length int32) uint16
 		data := make([]byte, 1)
 
 		_, err := source.Read(data)
-		if err != nil {
-			log.Fatal(err.Error())
+		if err != io.EOF {
+			return -1, err
 		}
 
 		value = value ^ uint16(data[0])
 		value = (value >> 8) ^ CrcTable[value&0xFF]
 	}
 
-	return value
+	return value, nil
 }
