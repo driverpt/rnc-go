@@ -30,10 +30,14 @@ func NewRNCReader(src io.Reader) (core.RNCReader, error) {
 	return nil, core.NewUnsupportedCompressionMethodError(header.CompressionMethod)
 }
 
-func VerifyPackedChecksum(header *core.RNCHeader, src io.Reader) (bool, error){
+func VerifyPackedChecksum(header *core.RNCHeader, src io.Reader) (bool, error) {
 	switch header.CompressionMethod {
 	case 1:
-		checksum := rnc1.ComputeChecksum(src, core.HeaderSizeInBytes, int32(header.CompressedSize) + core.HeaderSizeInBytes)
+		checksum, err := rnc1.ComputeChecksum(src, core.HeaderSizeInBytes, int32(header.CompressedSize)+core.HeaderSizeInBytes)
+		if err != nil {
+			return false, err
+		}
+
 		if checksum != header.CompressedCRC {
 			return false, core.NewPackedCrcError(checksum, header.CompressedCRC)
 		}
@@ -45,10 +49,14 @@ func VerifyPackedChecksum(header *core.RNCHeader, src io.Reader) (bool, error){
 	return false, core.NewUnsupportedCompressionMethodError(header.CompressionMethod)
 }
 
-func VerifyUnpackedChecksum(header core.RNCHeader, src io.Reader) (bool, error){
+func VerifyUnpackedChecksum(header core.RNCHeader, src io.Reader) (bool, error) {
 	switch header.CompressionMethod {
 	case 1:
-		checksum := rnc1.ComputeChecksum(src, core.HeaderSizeInBytes, int32(header.OriginalSize) + core.HeaderSizeInBytes)
+		checksum, err := rnc1.ComputeChecksum(src, core.HeaderSizeInBytes, int32(header.OriginalSize)+core.HeaderSizeInBytes)
+		if err != nil {
+			return false, err
+		}
+
 		if checksum != header.OriginalCRC {
 			return false, core.NewPackedCrcError(checksum, header.OriginalCRC)
 		}
@@ -59,4 +67,3 @@ func VerifyUnpackedChecksum(header core.RNCHeader, src io.Reader) (bool, error){
 
 	return false, core.NewUnsupportedCompressionMethodError(header.CompressionMethod)
 }
-
