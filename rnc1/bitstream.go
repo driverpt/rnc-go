@@ -159,7 +159,7 @@ func (s *BitStream) refreshByteBuffer() (int, error) {
 
 	s.currentByteIndex = 0
 
-	if err == io.EOF {
+	if err == io.EOF || err == io.ErrUnexpectedEOF {
 		s.reachedEOF = true
 		return bytesRead + int(bytesStillAvailable), nil
 	}
