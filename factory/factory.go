@@ -52,7 +52,7 @@ func VerifyPackedChecksum(header *core.RNCHeader, src io.Reader) (bool, error) {
 func VerifyUnpackedChecksum(header core.RNCHeader, src io.Reader) (bool, error) {
 	switch header.CompressionMethod {
 	case 1:
-		checksum, err := rnc1.ComputeChecksum(src, core.HeaderSizeInBytes, int32(header.OriginalSize)+core.HeaderSizeInBytes)
+		checksum, err := rnc1.ComputeChecksum(src, 0, int32(header.OriginalSize))
 		if err != nil {
 			return false, err
 		}
