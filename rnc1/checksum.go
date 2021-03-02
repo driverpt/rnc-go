@@ -51,7 +51,7 @@ func ComputeChecksum(source io.Reader, initialOffset int32, length int32) (uint1
 		data := make([]byte, 1)
 
 		_, err := source.Read(data)
-		if err != io.EOF {
+		if err != io.EOF && err != nil {
 			return 0, err
 		}
 
