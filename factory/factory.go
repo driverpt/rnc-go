@@ -58,7 +58,7 @@ func VerifyUnpackedChecksum(header core.RNCHeader, src io.Reader) (bool, error) 
 		}
 
 		if checksum != header.OriginalCRC {
-			return false, core.NewPackedCrcError(checksum, header.OriginalCRC)
+			return false, core.NewUnpackedCrcError(checksum, header.OriginalCRC)
 		}
 		return true, nil
 	case 2:
